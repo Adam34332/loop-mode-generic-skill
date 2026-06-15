@@ -1,6 +1,6 @@
 # Loop Mode Generic Skill
 
-通用版 Loop Mode Skill，已剥离私有项目 references，可单独分享给朋友使用。
+通用版 Loop Mode Skill，私有项目可在 references中配置，通用型Skill。
 
 Signature: adam.liu
 
