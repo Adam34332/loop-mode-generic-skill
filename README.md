@@ -32,6 +32,28 @@ cp -R loop-mode-generic-skill ~/.codex/skills/loop-mode-generic
 
 If your agent does not support skills, paste `SKILL.md` into the system or project instructions and keep `references/` available as linked context.
 
+## Supported Environments
+
+This package is plain Markdown plus small Python validation scripts. It works best in coding agents that can read project files, run commands, and keep task state.
+
+| Environment | How to Use | Notes |
+|-------------|------------|-------|
+| Codex CLI / Codex-style agents | Install the folder as a skill, or paste `SKILL.md` into project instructions. | Best fit: native skill loading can route to `references/` on demand. |
+| Claude Code | Put the Loop Mode rules in `CLAUDE.md`, project instructions, or a custom skill/memory folder if your setup supports it. | For `/loop mode goal`, ask Claude Code to write the Long Goal Contract into the repo, for example `.loop-goals/<goal-id>.md`. |
+| VS Code agent extensions | Add `SKILL.md` to the workspace instruction file used by your extension. | Works with tools such as Copilot-style agents, Continue, Cursor, or similar IDE agents when they can read files and run terminal commands. |
+| Zed / Zcode-style coding agents | Add `SKILL.md` as project context or agent instructions. | If the tool has no native skill system, keep `references/` in the repo and tell the agent to load the relevant reference file. |
+| Generic ChatGPT / Claude / web chat | Paste the relevant sections of `SKILL.md` into the conversation. | Goal Mode still works conceptually, but the user or agent must manually maintain the state file. |
+| Automation runners / CI agents | Vendor this folder into the repo and call the Python validation scripts in CI. | Useful for checking that edited Loop Mode contracts and scripts remain coherent. |
+
+Minimum capability required:
+
+- Read local project files.
+- Follow `SKILL.md` as persistent instructions.
+- Run shell commands for validation, or at least report when command execution is unavailable.
+- For Goal Mode, write and reread a state file such as `.loop-goals/<goal-id>.md`.
+
+If an environment cannot persist files, use ordinary Loop Mode rather than Goal Mode, or paste the `Compact Resume Anchor` into the next session manually.
+
 ## Basic Usage
 
 Use ordinary Loop Mode for one bounded task:
