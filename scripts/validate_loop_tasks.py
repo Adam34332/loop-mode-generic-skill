@@ -104,6 +104,11 @@ def check_top_fields(data: dict[str, Any]) -> None:
     for key in ["revision", "planning_revision"]:
         if not isinstance(data.get(key), int) or data[key] < 1:
             raise AssertionError(f"{key} must be a positive integer")
+    commit_policy = require_object(data.get("commit_policy"), "commit_policy")
+    if commit_policy.get("commit_after_verify_and_audit") is not True:
+        raise AssertionError("commit_policy.commit_after_verify_and_audit must be true")
+    if commit_policy.get("require_clean_status_for_goal_complete") is not True:
+        raise AssertionError("commit_policy.require_clean_status_for_goal_complete must be true")
     require_list(data.get("tasks"), "tasks")
 
 
@@ -163,7 +168,9 @@ def check_task(task: dict[str, Any], task_ids: set[str]) -> None:
     if status == "passed":
         if verification.get("result") != "pass":
             raise AssertionError(f"{task_id}: passed task requires verification.result=pass")
-        if audit.get("required", True) and audit.get("status") != "pass":
+        if audit.get("required") is not True:
+            raise AssertionError(f"{task_id}: passed task requires audit.required=true")
+        if audit.get("status") != "pass":
             raise AssertionError(f"{task_id}: passed task requires audit.status=pass")
         if not evidence:
             raise AssertionError(f"{task_id}: passed task requires verification evidence")
@@ -185,6 +192,8 @@ def check_previous(current: dict[str, Any], previous: dict[str, Any]) -> None:
     planning_changed = current.get("planning_revision") != previous.get("planning_revision")
     if planning_changed:
         return
+    if previous.get("commit_policy") != current.get("commit_policy"):
+        raise AssertionError("commit_policy changed without planning_revision change")
     if set(current_tasks) != set(previous_tasks):
         raise AssertionError("task ids changed without planning_revision change")
     for task_id, previous_task in previous_tasks.items():
@@ -194,6 +203,23 @@ def check_previous(current: dict[str, Any], previous: dict[str, Any]) -> None:
                 raise AssertionError(
                     f"{task_id}: immutable field changed without planning_revision: {field}"
                 )
+        previous_verification = require_object(
+            previous_task.get("verification"),
+            f"{task_id}: previous verification",
+        )
+        current_verification = require_object(
+            current_task.get("verification"),
+            f"{task_id}: current verification",
+        )
+        for field in ["required", "commands"]:
+            if previous_verification.get(field) != current_verification.get(field):
+                raise AssertionError(
+                    f"{task_id}: verification.{field} changed without planning_revision"
+                )
+        previous_audit = require_object(previous_task.get("audit"), f"{task_id}: previous audit")
+        current_audit = require_object(current_task.get("audit"), f"{task_id}: current audit")
+        if previous_audit.get("required") != current_audit.get("required"):
+            raise AssertionError(f"{task_id}: audit.required changed without planning_revision")
 
 
 def validate_task_board(path: Path, previous: Path | None = None) -> dict[str, Any]:
