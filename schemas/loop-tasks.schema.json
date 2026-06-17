@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://loop-mode.local/schemas/loop-tasks.schema.json",
+  "title": "Loop Mode Coding Task Board",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["project_id", "goal_id", "revision", "planning_revision", "tasks"],
+  "properties": {
+    "project_id": { "type": "string", "minLength": 1 },
+    "goal_id": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "planning_revision": { "type": "integer", "minimum": 1 },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "id",
+          "title",
+          "description",
+          "description_hash",
+          "steps",
+          "steps_hash",
+          "status",
+          "verification",
+          "audit"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "description_hash": { "type": "string", "pattern": "^(sha256:)?[0-9a-f]{64}$" },
+          "steps": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "steps_hash": { "type": "string", "pattern": "^(sha256:)?[0-9a-f]{64}$" },
+          "status": {
+            "enum": [
+              "todo",
+              "claimed",
+              "in_progress",
+              "verify_pending",
+              "audit_pending",
+              "passed",
+              "blocked"
+            ]
+          },
+          "verification": {
+            "type": "object",
+            "required": ["required", "commands", "evidence", "result"],
+            "properties": {
+              "required": { "type": "boolean" },
+              "commands": { "type": "array", "items": { "type": "string" } },
+              "evidence": { "type": "array", "items": { "type": "string" } },
+              "result": { "enum": ["pending", "pass", "fail"] }
+            }
+          },
+          "audit": {
+            "type": "object",
+            "required": ["required", "status"],
+            "properties": {
+              "required": { "type": "boolean" },
+              "status": { "enum": ["pending", "pass", "fail", "needs_fix", "audit_unavailable"] },
+              "evidence": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "passes": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

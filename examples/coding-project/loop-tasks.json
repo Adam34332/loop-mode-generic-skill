@@ -1,0 +1,51 @@
+{
+  "project_id": "example-import-tool",
+  "goal_id": "20260617-1200-import-stability",
+  "revision": 1,
+  "planning_revision": 1,
+  "commit_policy": {
+    "commit_after_verify_and_audit": true,
+    "require_clean_status_for_goal_complete": true
+  },
+  "tasks": [
+    {
+      "id": "T001",
+      "title": "Handle empty CSV input",
+      "description": "Add a CSV import guard for empty files.",
+      "description_hash": "sha256:8e443f5a9a47e1d30530c25ddbbc927c8ad3571b405dc091bd175e7a48648f0e",
+      "steps": [
+        "Add a failing test for empty CSV",
+        "Handle empty input without crash",
+        "Run pytest tests/test_import.py"
+      ],
+      "steps_hash": "sha256:6bca602b9c083f52ea125467765dd1e85c56c28b46414170a6a19e031b751cc6",
+      "depends_on": [],
+      "write_scope": [
+        "src/importer/**",
+        "tests/test_import.py"
+      ],
+      "required": true,
+      "status": "passed",
+      "verification": {
+        "required": true,
+        "commands": [
+          "pytest tests/test_import.py"
+        ],
+        "evidence": [
+          "pytest tests/test_import.py -> passed"
+        ],
+        "result": "pass"
+      },
+      "audit": {
+        "required": true,
+        "status": "pass",
+        "evidence": [
+          "review confirmed empty CSV behavior and no unrelated rewrite"
+        ]
+      },
+      "blocker": null,
+      "commit_sha": null,
+      "passes": true
+    }
+  ]
+}

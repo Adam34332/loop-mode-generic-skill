@@ -1,0 +1,19 @@
+{
+  "task_id": "T002",
+  "blocked_at": "2026-06-17T12:10:00+08:00",
+  "blocked_by": "missing_env",
+  "evidence": [
+    "API_KEY is not set in .env.local"
+  ],
+  "completed_work": [
+    "Created local client wrapper",
+    "Added unit test with mocked API response"
+  ],
+  "not_committed_reason": "verification requires a real credential or approved mock-only scope",
+  "human_action_required": [
+    "Provide a local API key or approve mock-only completion"
+  ],
+  "resume_command": "pytest tests/test_client.py",
+  "rollback_or_patch_state": "patch_saved",
+  "next_probe": "check .env.local for API_KEY and rerun focused tests"
+}

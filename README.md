@@ -114,6 +114,40 @@ Important behavior:
 - The agent should keep monitoring or advancing until `definition_of_done` is verified.
 - It should stop only for completion, repeated no-progress blockage, destructive actions, permission/account/payment changes, invalid state, active lock conflict, or explicit user pause.
 
+## Long-Running Coding Projects
+
+For coding projects that may take many turns or multiple agent sessions, use a lightweight task board beside the Long Goal Contract:
+
+```text
+1. Create examples/coding-project/loop-tasks.json-style tasks from the product goal.
+2. Keep loop-progress.md as an append-only handoff log.
+3. Use a bootstrap check to prove the local app/test environment is ready.
+4. Work one task at a time.
+5. Mark a task passed only after verification evidence and audit/review pass.
+6. Use a blocker receipt when credentials, accounts, external services, or destructive actions are needed.
+7. Do not delete or rewrite tasks to claim completion.
+```
+
+The task board is an execution ledger, not the final source of truth. Goal Mode completion still requires the `definition_of_done`, verification, and audit/review to pass.
+
+Recommended files:
+
+```text
+.loop-goals/<goal-id>.md
+loop-tasks.json
+loop-progress.md
+blocker-receipt.json
+bootstrap.example.sh
+```
+
+Safety rules:
+
+- Do not use an unbounded shell loop as the default workflow.
+- Do not recommend permission-bypass flags as the normal path.
+- Do not treat `passes: true` alone as completion.
+- Commit completion only after verification and audit/review pass.
+- For UI pages or core interactions, run a browser smoke test and keep screenshot or trace evidence.
+
 ## Common Prompt Patterns
 
 Bug fix:
@@ -151,6 +185,7 @@ Run these before sharing or after editing the skill:
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_loop_mode_goal_contract.py
 PYTHONPYCACHEPREFIX=/tmp/loop-mode-pycache python3 -m py_compile scripts/*.py
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_loop_tasks.py examples/coding-project/loop-tasks.json
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/housekeep_loop_mode.py --json
 ```
 
@@ -162,12 +197,15 @@ MIT License. See `LICENSE`.
 
 - `SKILL.md`：主入口和通用不变量。
 - `references/`：长期目标、输出模板、五类场景模板。
-- `scripts/`：合同校验、长期目标状态校验、自清理脚本。
+- `examples/`：代码项目长跑任务板、进度日志、阻塞 receipt、bootstrap 示例。
+- `schemas/`：任务板 JSON Schema。
+- `scripts/`：合同校验、长期目标状态校验、任务板校验、自清理脚本。
 
 ## Quick Check
 
 ```bash
 cd loop-mode-generic-skill
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/check_loop_mode_goal_contract.py
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/validate_loop_tasks.py examples/coding-project/loop-tasks.json
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/housekeep_loop_mode.py --json
 ```
