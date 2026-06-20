@@ -4,6 +4,18 @@
 
 Signature: adam.liu
 
+## Source of Truth
+
+This repository is a public, sanitized export package. It is not the author's private runtime source of truth.
+
+Do not develop operational rules directly in this repository and then copy them back into a private runtime. The safe flow is one-way:
+
+```text
+private/runtime source of truth -> sanitize/export -> review diff -> publish this repo
+```
+
+If this package conflicts with a private or team runtime skill, the runtime skill wins.
+
 ## What It Does
 
 Loop Mode is an execution pattern for agents:

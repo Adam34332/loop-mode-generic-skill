@@ -6,6 +6,10 @@ author: adam.liu
 
 # Loop 模式 — 原子闭环执行引擎
 
+## Source of Truth
+
+This generic package is a public, sanitized export. It is not the private runtime source of truth. Do not develop private operational rules here and copy them back into a runtime skill; use the runtime source as authority, then sanitize/export/review before publishing this package.
+
 ## 心智模型
 
 把目标拆成高确定性的**原子操作**：每个操作输入确定、改动边界单一、验证结果二元、记录可恢复。不是"反复改小错"，也不是"只输出计划"。
